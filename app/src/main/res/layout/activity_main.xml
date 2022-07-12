@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
 
-    <cn.senseless.playground.barrage.BarrageView
+    <cn.senseless.barrage.BarrageView
         android:id="@+id/barrage_view"
         android:layout_width="match_parent"
         android:layout_height="200dp"
