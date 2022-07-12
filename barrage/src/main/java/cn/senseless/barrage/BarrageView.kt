@@ -1,9 +1,9 @@
 package cn.senseless.barrage
 
 import android.content.Context
-import android.graphics.BlendMode
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.graphics.RectF
 import android.os.Handler
 import android.os.HandlerThread
@@ -49,9 +49,9 @@ class BarrageView @JvmOverloads constructor(
 
     fun addBarrage(width: Int, height: Int) {
         if (mBounds.isEmpty) return
-        val entry = EmptyEntry(mBounds, mPaint, RectF())
-        entry.bounds.right = width.toFloat()
-        entry.bounds.bottom = height.toFloat()
+        val entry = EmptyEntry(mBounds, mPaint)
+        entry.right = width.toFloat()
+        entry.bottom = height.toFloat()
         addBarrage(entry)
     }
 
@@ -59,17 +59,17 @@ class BarrageView @JvmOverloads constructor(
         mHandler?.post {
             val shortRow = getShortRow()
             var nl = mBounds.right + mHorizontalSpace
-            var nt =
+            val nt =
                 mBounds.bottom - ((mRowCount - shortRow.rowId) * mRowHeight) - (mRowCount - shortRow.rowId - 1) * mVerticalSpace
             if (shortRow.isNotEmpty()) {
-                val lr = shortRow.last.bounds.right
+                val lr = shortRow.last.right
                 nl = if (lr >= mBounds.right) {
                     lr + mHorizontalSpace
                 } else {
                     mBounds.right + mHorizontalSpace
                 }
             }
-            entry.bounds.offsetTo(nl, nt)
+            entry.offsetTo(nl, nt)
             shortRow.addLast(entry)
             if (!mIsRunning) mHandler?.post(drawTask)
         }
@@ -83,14 +83,14 @@ class BarrageView @JvmOverloads constructor(
             if (row.isEmpty()) {
                 return row
             } else {
-                if (row.last.bounds.right < mBounds.right) {
+                if (row.last.right < mBounds.right) {
                     return row
                 } else {
                     if (right == 0f) {
-                        right = row.last.bounds.right
+                        right = row.last.right
                     } else {
-                        if (row.last.bounds.right < right) {
-                            right = row.last.bounds.right
+                        if (row.last.right < right) {
+                            right = row.last.right
                             index = i
                         }
                     }
@@ -117,7 +117,7 @@ class BarrageView @JvmOverloads constructor(
                 return
             }
             val canvas = holder.lockCanvas() ?: return
-            canvas.drawColor(Color.TRANSPARENT, BlendMode.CLEAR)
+            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
             for (index in mRows.lastIndex downTo 0) {
                 val row = mRows[index]
                 val iterator = row.iterator()

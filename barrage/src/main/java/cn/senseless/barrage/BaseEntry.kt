@@ -7,20 +7,18 @@ import android.graphics.RectF
 
 abstract class BaseEntry(
     private val maxBounds: RectF,
-    private val paint: Paint,
-    val bounds: RectF,
-) {
-    fun offset(dx: Float, dy: Float) {
-        bounds.offset(dx, dy)
+    protected val paint: Paint,
+) : RectF() {
+
+    open fun needRemove(): Boolean {
+        return right < maxBounds.left
     }
 
-    fun needRemove(): Boolean {
-        return bounds.right < maxBounds.left
-    }
-
-    fun draw(canvas: Canvas) {
-        if (bounds.left < maxBounds.right && bounds.right > maxBounds.left) {
-            canvas.drawRect(bounds, paint)
+    open fun draw(canvas: Canvas) {
+        if (left < maxBounds.right && right > maxBounds.left) {
+            onDraw(canvas)
         }
     }
+
+    abstract fun onDraw(canvas: Canvas)
 }
